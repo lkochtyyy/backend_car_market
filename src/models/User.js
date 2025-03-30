@@ -25,17 +25,12 @@ class User {
         return await db.execute("DELETE FROM utilisateur WHERE id = ?", [id]);
     }
 
-    static async updateNom(id, newNom) {
-        return await db.execute("UPDATE utilisateur SET nom = ? WHERE id = ?", [newNom, id]);
-    }
-
-    static async updatePrenom(id, newPrenom) {
-        return await db.execute("UPDATE utilisateur SET prenom = ? WHERE id = ?", [newPrenom, id]);
-    }
-
-    static async updateNumTel(id, newNumTel) {
-        return await db.execute("UPDATE utilisateur SET tel = ? WHERE id = ?", [newNumTel, id]);
-    }
+    static async updateUserInfo(id, nom, prenom, numTel) {
+        return await db.execute(
+            "UPDATE utilisateur SET nom = ?, prenom = ?, tel = ? WHERE id = ?",
+            [nom, prenom, numTel, id]
+        );
+    }    
 
     static async updatePassword(id, newPassword) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);

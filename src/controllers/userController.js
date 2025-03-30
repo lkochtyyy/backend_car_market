@@ -13,11 +13,14 @@ class UserController {
             const userExists = await User.findUserByEmail(email);
             if (userExists) return res.status(400).json({ message: "User already exists" });
 
-            await User.createUser({ nom, prenom, numTel, email, password, role });
+            const newUser = await User.createUser({ nom, prenom, numTel, email, password, role });
 
             sendMail(email, "Welcome to Car Market 🚗", `<h1>Welcome, ${nom}!</h1><p>Enjoy browsing our car collection! 🚘</p>`);
 
-            res.status(201).json({ message: "User registered successfully!" });
+            res.status(201).json({ 
+                message: "User registered successfully!", 
+                userId: newUser.id 
+            });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -38,7 +41,10 @@ class UserController {
                 { expiresIn: "1h" }
             );
 
-            res.json({ token });
+            res.json({ 
+                token, 
+                userId: user.id 
+            });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -72,34 +78,17 @@ class UserController {
         }
     }
 
-    async updateNom(req, res) {
+    async updateUserInfo(req, res) {
         try {
             const { id } = req.params;
-            const { newNom } = req.body;
-            await User.updateNom(id, newNom);
-            res.json({ message: "Nom updated successfully!" });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
+            const { nom, prenom, numTel } = req.body;
 
-    async updatePrenom(req, res) {
-        try {
-            const { id } = req.params;
-            const { newPrenom } = req.body;
-            await User.updatePrenom(id, newPrenom);
-            res.json({ message: "Prenom updated successfully!" });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
-
-    async updateNumTel(req, res) {
-        try {
-            const { id } = req.params;
-            const { newNumTel } = req.body;
-            await User.updateNumTel(id, newNumTel);
-            res.json({ message: "NumTel updated successfully!" });
+            await User.updateUserInfo(id, nom, prenom, numTel);
+            
+            res.json({ 
+                message: "User information updated successfully!",
+                userId: id 
+            });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
