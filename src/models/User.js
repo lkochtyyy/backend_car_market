@@ -8,7 +8,7 @@ class User {
             "INSERT INTO utilisateur (nom, prenom, tel, email, password, role) VALUES (?, ?, ?, ?, ?, ?)",
             [nom, prenom, numTel, email, hashedPassword, role]
         );
-        return result;
+        return { id: result.insertId };
     }
 
     static async findUserByEmail(email) {
