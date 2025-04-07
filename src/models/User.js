@@ -32,9 +32,9 @@ class User {
         );
     }    
 
-    static async updatePassword(id, newPassword) {
+    static async updatePassword(email , newPassword) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        return await db.execute("UPDATE utilisateur SET password = ? WHERE id = ?", [hashedPassword, id]);
+        return await db.execute("UPDATE utilisateur SET password = ? WHERE email = ?", [hashedPassword, email]);
     }
 }
 
