@@ -94,17 +94,7 @@ class UserController {
         }
     }
 
-    async updatePassword(req, res) {
-        try {
-            const { id } = req.params;
-            const { newPassword } = req.body;
-            await User.updatePassword(id, newPassword);
-            res.json({ message: "Password updated successfully!" });
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    }
-
+    
     async forgotPassword(req, res) {
         try {
             const { email } = req.body;
@@ -115,7 +105,7 @@ class UserController {
             verificationCodes.set(email, verificationCode);
             sendMail(email, "Reset Your Password", `<h1>Reset Code: ${verificationCode}</h1>`);
 
-            res.json({ message: "Reset code sent to your email" });
+            res.json({ message: "Reset code sent to your email " , verificationCode: verificationCode });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -123,13 +113,13 @@ class UserController {
 
     async resetPassword(req, res) {
         try {
-            const { email, verificationCode, newPassword } = req.body;
-
-            if (verificationCodes.get(email) !== parseInt(verificationCode)) {
+            const { email , receivedcode , verificationCode, newPassword } = req.body;
+            if (receivedcode!== parseInt(verificationCode)) {
                 return res.status(400).json({ message: "Invalid verification code" });
             }
 
-            await User.updatePasswordByEmail(email, newPassword);
+
+            await User.updatePassword(email, newPassword);
             verificationCodes.delete(email);
             res.json({ message: "Password reset successfully" });
         } catch (error) {
