@@ -78,22 +78,49 @@ class UserController {
         }
     }
 
-    async updateUserInfo(req, res) {
+    async updateNom(req, res) {
         try {
             const { id } = req.params;
-            const { nom, prenom, numTel } = req.body;
-
-            await User.updateUserInfo(id, nom, prenom, numTel);
-            
-            res.json({ 
-                message: "User information updated successfully!",
-                userId: id 
-            });
+            const { newNom } = req.body;
+            await User.updateNom(id, newNom);
+            res.json({ message: "Nom updated successfully!", id: id });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
 
+    async updatePrenom(req, res) {
+        try {
+            const { id } = req.params;
+            const { newPrenom } = req.body;
+            await User.updatePrenom(id, newPrenom);
+            res.json({ message: "Prenom updated successfully!", id: id });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async updateNumTel(req, res) {
+        try {
+            const { id } = req.params;
+            const { newNumTel } = req.body;
+            await User.updateNumTel(id, newNumTel);
+            res.json({ message: "NumTel updated successfully!", id: id });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async updatePassword(req, res) {
+        try {
+            const { id } = req.params;
+            const { newPassword } = req.body;
+            await User.updatePassword(id, newPassword);
+            res.json({ message: "Password updated successfully!", id: id });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
     
     async forgotPassword(req, res) {
         try {

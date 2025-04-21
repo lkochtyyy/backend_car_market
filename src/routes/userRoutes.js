@@ -8,10 +8,12 @@ router.get("/", userController.getUsers);
 router.get("/:id", userController.getUserById);
 router.delete("/:id", userController.deleteUser);
 
-
-router.put("/:id", userController.updateUserInfo);
-
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
+
+router.put("/:id/nom", userController.updateNom);
+router.put("/:id/prenom", userController.updatePrenom);
+router.put("/:id/numTel", userController.updateNumTel);
+router.put("/:id/password", userController.updatePassword);
 
 module.exports = router;
