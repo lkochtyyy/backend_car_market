@@ -37,9 +37,9 @@ class User {
         return await db.execute("UPDATE utilisateur SET tel = ? WHERE id = ?", [newNumTel, id]);
     }
 
-    static async updatePassword(email , newPassword) {
+    static async updatePassword(id , newPassword) {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        return await db.execute("UPDATE utilisateur SET password = ? WHERE email = ?", [hashedPassword, email]);
+        return await db.execute("UPDATE utilisateur SET password = ? WHERE id = ?", [hashedPassword, id]);
     }
 }
 
