@@ -3,15 +3,25 @@ const Favoris = require('../models/favoris');
 // ➕ Ajouter aux favoris
 exports.addFavori = (req, res) => {
   const { user_id, car_id } = req.body;
+
   if (!user_id || !car_id) {
     return res.status(400).json({ error: 'user_id et car_id sont requis' });
   }
 
-  Favoris.add(user_id, car_id, (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-    res.status(201).json({ message: 'Ajouté aux favoris ✅' });
+  Favoris.exists(user_id, car_id, (err, exists) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (exists) {
+      return res.status(409).json({ message: 'Ce favori existe déjà ❌' });
+    }
+
+    Favoris.add(user_id, car_id, (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json({ message: 'Ajouté aux favoris ✅' });
+    });
   });
 };
+
 
 exports.getFavorisByUser = (req, res) => {
     console.log("user_id reçu:", req.params.user_id);
