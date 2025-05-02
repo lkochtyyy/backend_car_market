@@ -1,23 +1,31 @@
 const Favoris = require('../models/favoris');
 
 // ➕ Ajouter aux favoris
-exports.addFavori = (req, res) => {
+exports.addFavori = async (req, res) => {
   const { user_id, car_id } = req.body;
+  //console.log("received body ", req.body);
+
   if (!user_id || !car_id) {
+    //console.log("Validation failed: Missing user_id or car_id");
     return res.status(400).json({ error: 'user_id et car_id sont requis' });
   }
 
-  Favoris.checkExists(user_id, car_id, (err, exists) => {
-    if (err) return res.status(500).json({ error: err });
+  try {
+    const exists = await Favoris.checkExists(user_id, car_id);
+    //console.log("Check exists result:", exists);
+
     if (exists) {
       return res.status(400).json({ error: 'Ce véhicule est déjà dans les favoris' });
     }
 
-    Favoris.add(user_id, car_id, (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.status(201).json({ message: 'Ajouté aux favoris ✅' });
-    });
-  });
+    const result = await Favoris.add(user_id, car_id);
+    //console.log("Direct add result:", result);
+
+    res.status(201).json({ message: 'Ajouté aux favoris ✅' });
+  } catch (err) {
+    //console.error("❌ Error in addFavori:", err);
+    res.status(500).json({ error: err.message || 'Erreur serveur' });
+  }
 };
 
 
