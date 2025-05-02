@@ -17,11 +17,13 @@ const Favoris = {
     return result;
   },
 
-  getByUser: async (user_id) => {
-    const sql = 'SELECT * FROM favoris WHERE user_id = ?';
-    const [rows] = await db.execute(sql, [user_id]);
-    return rows;
-  },
+ // model.js
+getByUser: async (user_id) => {
+  const sql = 'SELECT * FROM favoris WHERE user_id = ?';
+  const [rows] = await db.execute(sql, [user_id]);
+  return rows;
+},
+
 
   delete: async (user_id, car_id) => {
     const sql = 'DELETE FROM favoris WHERE user_id = ? AND car_id = ?';
