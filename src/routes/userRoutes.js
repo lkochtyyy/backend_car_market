@@ -15,5 +15,6 @@ router.put("/:id/nom", userController.updateNom);
 router.put("/:id/prenom", userController.updatePrenom);
 router.put("/:id/numTel", userController.updateNumTel);
 router.put("/:id/password", userController.updatePassword);
+router.put("/:id/brand", userController.updatePrefferedBrand);
 
 module.exports = router;

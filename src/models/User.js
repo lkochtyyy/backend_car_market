@@ -2,11 +2,11 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 class User {
-    static async createUser({ nom, prenom, numTel, email, password, role }) {
+    static async createUser({ nom, prenom, numTel, email, password, role, preferred_car_market }) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await db.execute(
-            "INSERT INTO utilisateur (nom, prenom, tel, email, password, role) VALUES (?, ?, ?, ?, ?, ?)",
-            [nom, prenom, numTel, email, hashedPassword, role]
+            "INSERT INTO utilisateur (nom, prenom, tel, email, password, role, preferred_car_market) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [nom, prenom, numTel, email, hashedPassword, role, preferred_car_market]
         );
         return { id: result.insertId };
     }
@@ -27,6 +27,10 @@ class User {
 
     static async updateNom(id, newNom) {
         return await db.execute("UPDATE utilisateur SET nom = ? WHERE id = ?", [newNom, id]);
+    }
+
+    static async updatePreferredBrand(id, preferred_car_market) {
+        return await db.execute("UPDATE utilisateur SET preferred_car_market = ? WHERE id = ?", [preferred_car_market, id]);
     }
 
     static async updatePrenom(id, newPrenom) {

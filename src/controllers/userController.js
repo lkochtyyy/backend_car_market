@@ -9,11 +9,11 @@ const verificationCodes = new Map();
 class UserController {
     async createUser(req, res) {
         try {
-            const { nom, prenom, numTel, email, password, role } = req.body;
+            const { nom, prenom, numTel, email, password, role, preferred_car_market } = req.body;
             const userExists = await User.findUserByEmail(email);
             if (userExists) return res.status(400).json({ message: "User already exists" });
 
-            const newUser = await User.createUser({ nom, prenom, numTel, email, password, role });
+            const newUser = await User.createUser({ nom, prenom, numTel, email, password, role, preferred_car_market });
 
             sendMail(email, "Welcome to Car Market 🚗", `<h1>Welcome, ${nom}!</h1><p>Enjoy browsing our car collection! 🚘</p>`);
 
@@ -84,6 +84,18 @@ class UserController {
             const { newNom } = req.body;
             await User.updateNom(id, newNom);
             res.json({ message: "Nom updated successfully!", id: id });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async updatePrefferedBrand(req, res) {
+        try {
+            const { id } = req.params;
+            const { preferred_car_market } = req.body;
+            console.log("preferred_car_market", preferred_car_market);
+            await User.updatePreferredBrand(id, preferred_car_market);
+            res.json({ message: "preferred_car_market updated successfully!", id: id });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

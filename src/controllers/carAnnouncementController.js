@@ -11,7 +11,9 @@ exports.createAnnouncement = async (req, res) => {
 
 exports.getAllAnnouncements = async (req, res) => {
   try {
-    const announcements = await CarAnnouncement.getAll();
+    const userId = req.query.user_id;
+    console.log("userId:", userId);
+    const announcements = await CarAnnouncement.getAll(userId);
     res.json(announcements);
   } catch (error) {
     res.status(500).json({ error: error.message });

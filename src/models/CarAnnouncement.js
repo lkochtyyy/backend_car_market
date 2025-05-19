@@ -21,10 +21,23 @@ class CarAnnouncement {
     return { id: result.insertId };
   }
 
-  static async getAll() {
-    const [rows] = await db.execute("SELECT * FROM carannouncement ORDER BY created_at DESC");
-    return rows;
-  }
+  static async getAll(userId) {
+  const query = `
+    SELECT c.*, 
+           CASE 
+             WHEN CONCAT('*', u.preferred_car_market, '*') LIKE CONCAT('%*', c.brand, '*%') THEN 1
+             WHEN f.car_id IS NOT NULL THEN 2
+             ELSE 3
+           END AS sort_order
+    FROM carannouncement c
+    LEFT JOIN utilisateur u ON u.id = ?
+    LEFT JOIN favoris f ON f.car_id = c.id AND f.user_id = ?
+    ORDER BY sort_order, c.created_at DESC
+  `;
+  const [rows] = await db.execute(query, [userId, userId]);
+  return rows;
+}
+
 
   static async getById(id) {
     const [rows] = await db.execute("SELECT * FROM carannouncement WHERE id = ?", [id]);
