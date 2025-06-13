@@ -4,11 +4,6 @@ const cors = require("cors");
 const fileUpload = require('express-fileupload');
 const path = require('path');
 
-const userRoutes = require('./src/routes/userRoutes');
-const carAnnouncementRoutes = require('./src/routes/carAnnouncementRoutes');
-const favorisRoutes = require('./src/routes/favorisRoutes'); // 💡 ajout favoris
-
-
 const app = express();
 app.use(fileUpload());
 
@@ -16,6 +11,50 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
+
+const userRoutes = require('./src/routes/userRoutes');
+const carAnnouncementRoutes = require('./src/routes/carAnnouncementRoutes');
+const favorisRoutes = require('./src/routes/favorisRoutes'); 
+
+
+const http = require('http');
+const { Server } = require('socket.io');
+const chatRoutes = require('./src/routes/messageRoutes');
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+  },
+});
+
+app.use(express.json());
+app.use('/api/chat', chatRoutes);
+
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('join', (userId) => {
+    socket.join(userId);
+    console.log(`User ${userId} joined room`);
+  });
+
+  socket.on('sendMessage', async ({ senderId, receiverId, content }) => {
+    try {
+      const messageController = require('./src/controllers/messageController');
+      const message = await messageController.createMessage({ senderId, receiverId, content });
+      io.to(receiverId).emit('newMessage', message);
+      io.to(senderId).emit('newMessage', message);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
 
 // 📦 ROUTES
 app.use("/user", userRoutes);
